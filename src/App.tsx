@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Tooltip from './Tooltip/Tooltip';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className='app'>
+      <h1 className='app-heading'>TooltipPro Examples</h1>
+      {/* Different types of trigger - Click vs Hover */}
+      <div className='content-row'>
+        <Tooltip content='I appear on click!' triggerType='click'>
+          <span className='tooltip-btn'>On Click Example</span>
+        </Tooltip>
+        <Tooltip content='I appear on hover!' triggerType='hover'>
+          <span className='tooltip-btn'>On Hover Example</span>
+        </Tooltip>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      {/* Different positions */}
+      <div className='content-row'>
+        <Tooltip content='Left position!' triggerType='hover' position='left'>
+          <span className='tooltip-btn'>Left</span>
+        </Tooltip>
+        <Tooltip content='Top position!' triggerType='hover' position='top'>
+          <span className='tooltip-btn'>Top</span>
+        </Tooltip>
+        <Tooltip
+          content='Bottom position!'
+          triggerType='hover'
+          position='bottom'>
+          <span className='tooltip-btn'>Bottom</span>
+        </Tooltip>
+        <Tooltip content='Right position!' triggerType='hover' position='right'>
+          <span className='tooltip-btn'>Right</span>
+        </Tooltip>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

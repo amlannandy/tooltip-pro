@@ -1,0 +1,61 @@
+/* src/Tooltip.css */
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block; /* Keep the wrapper inline for text elements */
+}
+
+.tooltip-trigger {
+  cursor: pointer; /* Indicate that the trigger is interactive */
+}
+
+/* Tooltip Content Styling */
+.tooltip-content {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent background */
+  color: white; /* Text color */
+  padding: 10px; /* Padding around the text */
+  border-radius: 4px; /* Rounded corners */
+  z-index: 1000; /* Make sure the tooltip appears above other elements */
+  white-space: nowrap; /* Prevent text from wrapping */
+  transition: opacity 0.3s ease; /* Smooth transition for appearance */
+}
+
+/* Positioning based on the position prop */
+.tooltip-content.top {
+  bottom: 100%; /* Position above the trigger */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust to center */
+}
+
+.tooltip-content.bottom {
+  top: 100%; /* Position below the trigger */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust to center */
+}
+
+.tooltip-content.left {
+  top: 50%; /* Center vertically */
+  right: 100%; /* Position to the left of the trigger */
+  transform: translateY(-50%); /* Adjust to center */
+}
+
+.tooltip-content.right {
+  top: 50%; /* Center vertically */
+  left: 100%; /* Position to the right of the trigger */
+  transform: translateY(-50%); /* Adjust to center */
+}
+
+/* Close button styling */
+.tooltip-close-btn {
+  background: transparent; /* Transparent background */
+  border: none; /* No border */
+  color: white; /* White text color */
+  font-size: 16px; /* Size of the close button */
+  cursor: pointer; /* Pointer cursor */
+  margin-left: 10px; /* Space between tooltip content and close button */
+}
+
+.tooltip-close-btn:hover {
+  color: rgba(255, 255, 255, 0.8); /* Slightly lighter on hover */
+}
