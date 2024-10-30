@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './styles.css';
 import { ITooltipProps } from './types';
 
@@ -9,6 +9,7 @@ const Tooltip: React.FC<ITooltipProps> = ({
   children,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [adjustedPosition, setAdjustedPosition] = useState(position);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLDivElement | null>(null);
 
@@ -21,42 +22,68 @@ const Tooltip: React.FC<ITooltipProps> = ({
     }
   };
 
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (
+      tooltipRef.current &&
+      !tooltipRef.current.contains(event.target as Node) &&
+      triggerRef.current &&
+      !triggerRef.current.contains(event.target as Node)
+    ) {
+      hideTooltip();
+    }
+  }, []);
+
+  const adjustTooltipPosition = useCallback(() => {
+    if (triggerRef.current) {
+      const triggerRect = triggerRef.current.getBoundingClientRect();
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      let newPosition = position;
+
+      if (position === 'top' && triggerRect.top < 0) {
+        newPosition = 'bottom';
+      } else if (position === 'bottom' && triggerRect.bottom > viewportHeight) {
+        newPosition = 'top';
+      } else if (position === 'left' && triggerRect.left < 0) {
+        newPosition = 'right';
+      } else if (position === 'right' && triggerRect.right > viewportWidth) {
+        newPosition = 'left';
+      }
+
+      setAdjustedPosition(newPosition);
+    }
+  }, [position]);
+
+  useEffect(() => {
+    if (isVisible) {
+      adjustTooltipPosition();
+    }
+  }, [isVisible, adjustTooltipPosition]);
+
   useEffect(() => {
     if (triggerType === 'click' && isVisible) {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (
-          tooltipRef.current &&
-          !tooltipRef.current.contains(event.target as Node) &&
-          triggerRef.current &&
-          !triggerRef.current.contains(event.target as Node)
-        ) {
-          hideTooltip();
-        }
-      };
       document.addEventListener('mousedown', handleClickOutside);
       return () =>
         document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isVisible, triggerType]);
+  }, [isVisible, triggerType, handleClickOutside]);
 
   return (
     <div className='tooltip-wrapper' onKeyDown={handleKeyPress}>
       <div
         className='tooltip-trigger'
         ref={triggerRef}
-        // Show the tooltip on hover on
         onMouseEnter={triggerType === 'hover' ? showTooltip : undefined}
-        // Hide the tooltip on hover off
         onMouseLeave={triggerType === 'hover' ? hideTooltip : undefined}
-        // Show the tooltip on click
         onClick={triggerType === 'click' ? showTooltip : undefined}
-        // Make the trigger focusable
         tabIndex={0}>
         {children}
       </div>
       {isVisible && (
         <div
-          className={`tooltip-content ${position}`}
+          className={`tooltip-content ${adjustedPosition}`}
           ref={tooltipRef}
           role='tooltip'
           aria-hidden={!isVisible}>
