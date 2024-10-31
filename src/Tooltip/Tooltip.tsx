@@ -51,6 +51,10 @@ const Tooltip: React.FC<ITooltipProps> = ({
     }
   }, [isTooltipVisible, triggerType, handleClickOutside]);
 
+  /**
+   * To adjust tooltip position based on proximity to viewport edges.
+   * In order to prevent tooltip getting cropped out at screen edges.
+   */
   const adjustTooltipPosition = useCallback(() => {
     if (triggerRef.current) {
       const triggerRect = triggerRef.current.getBoundingClientRect();
