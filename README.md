@@ -2,6 +2,8 @@
 
 TooltipPro is a web-based tooltip component that provides contextual information on hover or click interactions.
 
+## Table of Contents
+
 1. [Overview](#overview)
 2. [Setup Instructions](#setup-instructions)
 3. [Using the Component](#using-the-component)
@@ -81,7 +83,36 @@ The component folder consists of 3 files -
 
 ### Structure
 
-### Logic
+The Tooltip component has a straightforward structure:
+
+- `Main Wrapper` - A div with class `tooltip-wrapper` holds both the tooltip trigger and the tooltip content.
+- `Trigger Element` - The `tooltip-trigger` div acts as the interactive element that users focus on or hover over to display the tooltip. It contains the children prop, allowing it to render any nested content (like text or icons).
+- `Tooltip Content` - Another div with class `tooltip-content` renders the actual tooltip text (`content` prop). It also has dynamic classes and attributes, including an id, a role for screen readers, and dynamic styling based on the tooltip’s position.
+
+### Patterns and Logic
+
+The architecture follows a functional component pattern:
+
+- React Hooks - It leverages useState, useRef, useEffect, and useCallback hooks:
+  - `useState` - Manages `isTooltipVisible` and `adjustedPosition`.
+  - `useRef` - Holds references to the tooltip and trigger elements to handle DOM interactions.
+  - `useEffect` - Handles event listeners for interactions outside the component and updates the tooltip’s position dynamically.
+  - `useCallback` - Optimizes event handlers to prevent unnecessary re-renders.
+- `Conditional Rendering` - Renders tooltip-content only when `isTooltipVisible` is true.
+- `Position Adjustment` - The tooltip’s position (top, bottom, left, or right) is recalculated based on screen boundaries to ensure it doesn’t overflow beyond the viewport.
+
+The component also handles several events to control the tooltip display:
+
+- Mouse and Focus Events:
+
+  - `onMouseEnter`/`onMouseLeave` - for hover-based tooltips.
+  - `onFocus`/`onBlur` - to support keyboard navigation in hover mode.
+  - `onClick` - for click-based tooltips.
+
+- Keyboard Events:
+  - `onKeyDown` allows toggling the tooltip with Enter/Space keys in click mode and hides it on pressing Escape.
+- Outside Click Detection:
+  - An event listener for mousedown is added/removed based on tooltip visibility, allowing the tooltip to close when clicking outside it.
 
 ### Accessibility
 
