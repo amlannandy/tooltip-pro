@@ -8,17 +8,24 @@ const Tooltip: React.FC<ITooltipProps> = ({
   position = 'top',
   children,
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isTooltipVisible, toggleIsTooltipVisible] = useState(false);
   const [adjustedPosition, setAdjustedPosition] = useState(position);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLDivElement | null>(null);
 
-  const showTooltip = () => setIsVisible(true);
-  const hideTooltip = () => setIsVisible(false);
+  const showTooltip = () => toggleIsTooltipVisible(true);
+  const hideTooltip = () => toggleIsTooltipVisible(false);
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'Escape') {
       hideTooltip();
+    }
+    if (
+      (event.key === 'Enter' || event.key === ' ') &&
+      triggerType === 'click'
+    ) {
+      event.preventDefault();
+      toggleIsTooltipVisible(prev => !prev);
     }
   };
 
@@ -33,15 +40,21 @@ const Tooltip: React.FC<ITooltipProps> = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (triggerType === 'click' && isTooltipVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isTooltipVisible, triggerType, handleClickOutside]);
+
   const adjustTooltipPosition = useCallback(() => {
     if (triggerRef.current) {
       const triggerRect = triggerRef.current.getBoundingClientRect();
-
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
       let newPosition = position;
-
       if (position === 'top' && triggerRect.top < 0) {
         newPosition = 'bottom';
       } else if (position === 'bottom' && triggerRect.bottom > viewportHeight) {
@@ -51,42 +64,41 @@ const Tooltip: React.FC<ITooltipProps> = ({
       } else if (position === 'right' && triggerRect.right > viewportWidth) {
         newPosition = 'left';
       }
-
       setAdjustedPosition(newPosition);
     }
   }, [position]);
 
   useEffect(() => {
-    if (isVisible) {
+    if (isTooltipVisible) {
       adjustTooltipPosition();
     }
-  }, [isVisible, adjustTooltipPosition]);
-
-  useEffect(() => {
-    if (triggerType === 'click' && isVisible) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () =>
-        document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [isVisible, triggerType, handleClickOutside]);
+  }, [isTooltipVisible, adjustTooltipPosition]);
 
   return (
-    <div className='tooltip-wrapper' onKeyDown={handleKeyPress}>
+    <div className='tooltip-wrapper'>
       <div
         className='tooltip-trigger'
         ref={triggerRef}
         onMouseEnter={triggerType === 'hover' ? showTooltip : undefined}
         onMouseLeave={triggerType === 'hover' ? hideTooltip : undefined}
+        onFocus={triggerType === 'hover' ? showTooltip : undefined}
+        onBlur={triggerType === 'hover' ? hideTooltip : undefined}
         onClick={triggerType === 'click' ? showTooltip : undefined}
-        tabIndex={0}>
+        onKeyDown={handleKeyPress}
+        tabIndex={0}
+        aria-expanded={isTooltipVisible}
+        aria-describedby='tooltip-content'
+        aria-haspopup='true'>
         {children}
       </div>
-      {isVisible && (
+      {isTooltipVisible && (
         <div
+          id='tooltip-content'
           className={`tooltip-content ${adjustedPosition}`}
           ref={tooltipRef}
           role='tooltip'
-          aria-hidden={!isVisible}>
+          aria-hidden={!isTooltipVisible}
+          aria-live='polite'>
           {content}
           {triggerType === 'click' && (
             <button
