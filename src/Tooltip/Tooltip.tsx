@@ -17,9 +17,11 @@ const Tooltip: React.FC<ITooltipProps> = ({
   const hideTooltip = () => toggleIsTooltipVisible(false);
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
+    // Hide the tooltip when escape is pressed on an open focussed tooltip.
     if (event.key === 'Escape') {
       hideTooltip();
     }
+    // Toggle tooltip visibility on 'Enter' and 'Space' key presses.
     if (
       (event.key === 'Enter' || event.key === ' ') &&
       triggerType === 'click'
@@ -29,6 +31,7 @@ const Tooltip: React.FC<ITooltipProps> = ({
     }
   };
 
+  // Hide the tooltip whenever a click is registered outside the tooltip element.
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       tooltipRef.current &&
