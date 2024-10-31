@@ -6,7 +6,7 @@ TooltipPro is a web-based tooltip component that provides contextual information
 2. [Setup Instructions](#setup-instructions)
 3. [Using the Component](#using-the-component)
 4. [Technologies Used](#technologies-used)
-5. [Component Architecture](#application-architecture)
+5. [Component Architecture](#component-architecture)
 6. [Demonstration](#demonstration)
 
 ## Overview
@@ -100,3 +100,5 @@ Additionally, extra handlers have been added to toggle the tooltip on `Enter`/`S
 ## Demonstration
 
 This app is hosted on Netlify and can be checked [here](https://tooltippro.netlify.app/).
+
+https://github.com/user-attachments/assets/933f96cc-46a0-4609-b2a1-d024196f407c
